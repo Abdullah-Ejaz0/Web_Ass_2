@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import AuthLayout from '../components/AuthLayout';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerUser } from '../redux/store';
 import { useNavigate } from 'react-router-dom';
@@ -85,17 +86,17 @@ function Register() {
     dispatch(registerUser({ user: newUser }));
     const updatedUsers = [...users, newUser];
     localStorage.setItem('users', JSON.stringify(updatedUsers));
-    setMessage('Registration successful!');
     navigate('/login');
   };
 
   return (
-    <div className="register-container">
-      <h1>Create an Account</h1>
-      <p>Register to discover and manage events.</p>
-
-      <form onSubmit={handleRegister}>
-        <div>
+    <AuthLayout
+      title="Create an account"
+      subtitle="Register to discover and manage events."
+      footer={<>Already have an account? <Link to="/login">Login</Link></>}
+    >
+      <form onSubmit={handleRegister} className="auth-form">
+        <div className="form-group">
           <label htmlFor="name">Full Name</label>
           <input
             id="name"
@@ -107,7 +108,7 @@ function Register() {
           />
         </div>
 
-        <div>
+        <div className="form-group">
           <label htmlFor="email">Email Address</label>
           <input
             id="email"
@@ -119,7 +120,7 @@ function Register() {
           />
         </div>
 
-        <div>
+        <div className="form-group">
           <label htmlFor="password">Password</label>
           <input
             id="password"
@@ -132,7 +133,7 @@ function Register() {
           />
         </div>
 
-        <div>
+        <div className="form-group">
           <label htmlFor="confirmPassword">
             Confirm Password
           </label>
@@ -153,13 +154,9 @@ function Register() {
           </p>
         )}
 
-        <button type="submit">Create Account</button>
+        <button type="submit" className="auth-submit">Create Account</button>
       </form>
-
-      <p>
-        Already have an account? <Link to="/login">Login</Link>
-      </p>
-    </div>
+    </AuthLayout>
   );
 }
 

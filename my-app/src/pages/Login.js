@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { loginUser } from '../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import AuthLayout from '../components/AuthLayout';
 
 function Login() {
   const dispatch = useDispatch();
@@ -10,52 +11,65 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [message, setMessage] = useState('');
-  const [success, setSuccess] = useState(false);
 
   const handleLogin = (e) => {
     e.preventDefault();
 
-    const user = users.find((user) => user.email === email && user.password === password);
+    const cleanEmail = email.trim().toLowerCase();
+    const user = users.find((user) => user.email === cleanEmail && user.password === password);
 
     if (user) {
+      localStorage.setItem('currentuser', JSON.stringify(user));
       dispatch(loginUser({ currentuser: user }));
-      setMessage('Login successful!');
-      setSuccess(true);
-      //navigate('/dashboard');
+      navigate(location.state?.from || '/events', { replace: true });
     } else {
-      setMessage('Invalid email or password');
-      setSuccess(false);
+      setMessage('Invalid email or password.');
     }
   }
 
   return (
-    <form onSubmit={handleLogin}>
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
+    <AuthLayout
+      title="Welcome back"
+      subtitle="Log in to register for events and manage your bookings."
+      footer={<>New to EventHub? <Link to="/register">Create an account</Link></>}
+    >
+      <form onSubmit={handleLogin} className="auth-form">
+        <div className="form-group">
+          <label htmlFor="email">Email Address</label>
+          <input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
 
-      <button type="submit">Login</button>
+        {message && (
+          <p role="alert" className="error-message">
+            {message}
+          </p>
+        )}
 
-      {message && (
-        <p style={{ color: success ? 'green' : 'red' }}>
-          {message}
-        </p>
-      )}
-    </form>
+        <button type="submit" className="auth-submit">Login</button>
+      </form>
+    </AuthLayout>
   );
 }
 
