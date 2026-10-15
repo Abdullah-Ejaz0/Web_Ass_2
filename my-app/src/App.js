@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Events from './pages/Events';
 import EventDetails from './pages/EventDetails';
+import MyEvents from './pages/MyEvents';
 
 function App() {
   const registrations = useSelector((state) => state.registrations.list);
@@ -26,6 +27,7 @@ function App() {
         <Route path='/register' element={<GuestRoute><Register /></GuestRoute>} />
         <Route path='/events' element={<Events />} />
         <Route path='/events/:id' element={<EventDetails />} />
+        <Route path='/my-events' element={<MyEvents />} />
       </Routes>
   </BrowserRouter>
   );

@@ -23,6 +23,7 @@ function Navbar() {
         <Link to="/events">Events</Link>
         {currentuser ? (
           <>
+            <Link to="/my-events">My Events</Link>
             <span>Hi, {currentuser.name}</span>
             <button onClick={handleLogout}>Logout</button>
           </>

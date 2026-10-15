@@ -358,3 +358,13 @@ button:disabled {
   color: #256625;
   font-weight: 600;
 }
+
+/* ---------- My Events ---------- */
+.events-container h2 {
+  margin: 28px 0 12px;
+}
+
+.event-card-body .secondary-btn {
+  margin-top: 8px;
+  align-self: flex-start;
+}
