@@ -1,11 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   eventDetailsLoading,
   eventDetailsLoaded,
   eventDetailsFailed,
-  clearSelectedEvent
+  clearSelectedEvent,
+  registerForEvent,
+  cancelRegistration
 } from '../redux/store';
 import { fetchEventByIdFromApi } from '../api/ticketmaster';
 import { formatEventDate, getEventImage } from '../components/EventCard';
@@ -16,6 +18,42 @@ function EventDetails() {
   const { selectedEvent: event, detailsLoading, detailsError } = useSelector(
     (state) => state.events
   );
+
+  const { currentuser } = useSelector((state) => state.user);
+  const registrations = useSelector((state) => state.registrations.list);
+  const [message, setMessage] = useState('');
+
+  // Registrations belong to the logged in user, so check by email and event id
+  const isRegistered = registrations.some(
+    (item) => item.userEmail === currentuser?.email && item.eventId === id
+  );
+
+  const handleRegister = () => {
+    // Block duplicates even if the button is clicked twice quickly
+    if (isRegistered) {
+      setMessage('You are already registered for this event.');
+      return;
+    }
+
+    dispatch(
+      registerForEvent({
+        userEmail: currentuser.email,
+        eventId: event.id,
+        name: event.name,
+        date: event.dates?.start?.localDate || '',
+        time: event.dates?.start?.localTime || '',
+        venue: event._embedded?.venues?.[0]?.name || '',
+        city: event._embedded?.venues?.[0]?.city?.name || '',
+        image: getEventImage(event.images)
+      })
+    );
+    setMessage('You are registered for this event!');
+  };
+
+  const handleCancel = () => {
+    dispatch(cancelRegistration({ userEmail: currentuser.email, eventId: id }));
+    setMessage('Your registration has been cancelled.');
+  };
 
   useEffect(() => {
     let ignore = false;
@@ -128,6 +166,23 @@ function EventDetails() {
           {event.pleaseNote && <p>{event.pleaseNote}</p>}
         </div>
       )}
+
+      <div className="registration-box">
+        {currentuser ? (
+          isRegistered ? (
+            <button className="secondary-btn" onClick={handleCancel}>
+              Cancel Registration
+            </button>
+          ) : (
+            <button onClick={handleRegister}>Register for this Event</button>
+          )
+        ) : (
+          <p>
+            <Link to="/login">Log in</Link> to register for this event.
+          </p>
+        )}
+        {message && <p role="status" className="registration-message">{message}</p>}
+      </div>
 
       {event.url && (
         <a href={event.url} target="_blank" rel="noreferrer" className="event-card-link">

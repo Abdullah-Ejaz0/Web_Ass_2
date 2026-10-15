@@ -339,3 +339,22 @@ button:disabled {
   color: #1e6bd6;
   font-weight: 600;
 }
+
+/* ---------- Event registration ---------- */
+.registration-box {
+  margin: 20px 0;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f7f9fc;
+}
+
+.registration-box p {
+  margin: 0;
+}
+
+.registration-message {
+  margin-top: 10px !important;
+  color: #256625;
+  font-weight: 600;
+}

@@ -82,10 +82,31 @@ export const {
   clearSelectedEvent
 } = eventsSlice.actions;
 
+const registrationsSlice = createSlice({
+  name: 'registrations',
+  initialState: {
+    list: JSON.parse(localStorage.getItem('registrations') || '[]')
+  },
+  reducers: {
+    registerForEvent: (state, action) => {
+      state.list.push(action.payload);
+    },
+    cancelRegistration: (state, action) => {
+      const { userEmail, eventId } = action.payload;
+      state.list = state.list.filter(
+        (item) => !(item.userEmail === userEmail && item.eventId === eventId)
+      );
+    }
+  }
+});
+
+export const { registerForEvent, cancelRegistration } = registrationsSlice.actions;
+
 const store = configureStore({
   reducer: {
     user: userSlice.reducer,
-    events: eventsSlice.reducer
+    events: eventsSlice.reducer,
+    registrations: registrationsSlice.reducer
   }
 });
 
